@@ -24,3 +24,5 @@ services:
       - "8000:80"
     environment:
       DATABASE_URL: postgresql://user:password@db/db
+    command: sh -c "sleep 10 && exec uvicorn main:app --host 0.0.0.0 --port 80"
+  

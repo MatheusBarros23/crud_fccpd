@@ -44,4 +44,4 @@ def delete_player(team_id: int, player_id: int, db: Session = Depends(get_db)):
 
 @app.delete("/teams/{team_id}")
 def delete_team(team_id: int, db: Session = Depends(get_db)):
-    return delete_team_api(db, team_id)
+    return delete_team_api(db, team_id) 
