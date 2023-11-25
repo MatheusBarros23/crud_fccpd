@@ -51,6 +51,12 @@ def read_teams_api(db: Session, skip: int = 0, limit: int = 10):
     team_list = [{"id": team.id, "name": team.name} for team in teams]
     return team_list
 
+def read_players_api(db: Session, skip: int = 0, limit: int = 15):
+    players = db.query(Player).offset(skip).limit(limit).all()
+    player_list = [{"id": player.id, "name":player.name, "team": db.query(Team).filter(Team.id == player.team_id).first().name} for player in players]
+
+    return player_list
+
 def get_team_details_api(db: Session, team_id: int):
     team = db.query(Team).filter(Team.id == team_id).first()
     if not team:
