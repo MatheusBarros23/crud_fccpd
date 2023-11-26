@@ -1,7 +1,7 @@
 # main.py
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
-from crud import create_team_api, create_player_api, create_game_api, get_players_by_team_api, delete_player_api, read_teams_api, get_team_details_api, delete_team_api, read_players_api
+from crud import create_team_api, create_player_api, create_game_api, delete_game_api, get_players_by_team_api, delete_player_api, read_teams_api, get_team_details_api, delete_team_api, read_games_api,read_players_api
 from database import SessionLocal
 
 app = FastAPI()
@@ -41,6 +41,10 @@ def get_players_by_team(team_id: int, db: Session = Depends(get_db)):
 def create_game(team_id_home: int, team_id_away: int, date: str, location: str, db: Session = Depends(get_db)):
     return create_game_api(db, team_id_home, team_id_away, date, location)
 
+@app.get("/games/")
+def read_games(skip: int = 0, limit: int = 20, db: Session = Depends(get_db)):
+    return read_games_api(db, skip, limit)
+
 @app.delete("/teams/{team_id}/players/{player_id}")
 def delete_player(team_id: int, player_id: int, db: Session = Depends(get_db)):
     return delete_player_api(db, team_id, player_id)
@@ -48,3 +52,7 @@ def delete_player(team_id: int, player_id: int, db: Session = Depends(get_db)):
 @app.delete("/teams/{team_id}")
 def delete_team(team_id: int, db: Session = Depends(get_db)):
     return delete_team_api(db, team_id)
+
+@app.delete("/games/{game_id}")
+def delete_game(game_id: int, db: Session = Depends(get_db)):
+    return delete_game_api(db, game_id)

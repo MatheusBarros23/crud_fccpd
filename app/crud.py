@@ -31,6 +31,11 @@ def create_game_api(db: Session, team_id_home: int, team_id_away: int, date: str
     db.refresh(game)
     return game
 
+def read_games_api(db: Session, skip: int = 0, limit: int = 20):
+    games = db.query(Game).offset(skip).limit(limit).all()
+    game_list = [{"id": game.id, "date": game.date, "location": game.location, "team_home": db.query(Team).filter(Team.id == game.team_id_home).first().name, "team_away": db.query(Team).filter(Team.id == game.team_id_away).first().name} for game in games]
+    return game_list
+
 def get_players_by_team_api(db: Session, team_id: int):
     players = db.query(Player).filter(Player.team_id == team_id).all()
     return players
@@ -89,3 +94,12 @@ def delete_team_api(db: Session, team_id: int):
     db.delete(team)
     db.commit()
     return {"message": "Time deletado com sucesso"}
+
+def delete_game_api(db: Session, game_id: int):
+    game = db.query(Game).filter(Game.id == game_id).first()
+    if not game:
+        raise HTTPException(status_code=404, detail="Jogo não encontrado")
+
+    db.delete(game)
+    db.commit()
+    return {"message": "Jogo deletado com sucesso"}

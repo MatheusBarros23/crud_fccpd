@@ -29,3 +29,4 @@ class Game(Base):
     location = Column(String, nullable=False)
     team_home = relationship("Team", foreign_keys=[team_id_home], back_populates="games_home")
     team_away = relationship("Team", foreign_keys=[team_id_away], back_populates="games_away")
+    
