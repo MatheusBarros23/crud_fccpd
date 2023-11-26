@@ -19,8 +19,10 @@ def create_player_api(db: Session, name: str, team_id: int):
 
 def create_game_api(db: Session, team_id_home: int, team_id_away: int, date: str, location: str):
     teams = db.query(Team).filter(Team.id.in_([team_id_home, team_id_away])).all()
+    if team_id_home == team_id_away:
+        raise HTTPException(status_code=400, detail="Time não pode jogar contra si mesmo!") 
     if len(teams) != 2:
-        raise HTTPException(status_code=404, detail="Um ou ambos os times não foram encontrados")
+        raise HTTPException(status_code=404, detail="Um ou ambos os times não foram encontrados")  
 
     game = Game(date=date, location=location, team_home=teams[0], team_away=teams[1])
 
@@ -66,8 +68,8 @@ def get_team_details_api(db: Session, team_id: int):
     team_games_home = db.query(Game).filter(Game.team_id_home == team_id).all()
     team_games_away = db.query(Game).filter(Game.team_id_away == team_id).all()
 
-    games_home_details = [{"game_id": game.id, "date": game.date, "location": game.location} for game in team_games_home]
-    games_away_details = [{"game_id": game.id, "date": game.date, "location": game.location} for game in team_games_away]
+    games_home_details = [{"game_id": game.id, "date": game.date, "location": game.location, "contra": game.team_away} for game in team_games_home]
+    games_away_details = [{"game_id": game.id, "date": game.date, "location": game.location, "contra": game.team_home} for game in team_games_away]
 
     team_details = {
         "team_id": team.id,

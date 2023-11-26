@@ -46,7 +46,7 @@ def listar_jogos():
         team_home = db.query(Team).filter(Team.id == game.team_id_home).first()
         team_away = db.query(Team).filter(Team.id == game.team_id_away).first()
 
-        print(f"ID: {game.id}, Nome: {team_away.name} x {team_home.name}, Data: {game.date}, Local: {game.location}")
+        print(f"ID: {game.id}, Nome: {team_home.name} x {team_away.name}, Data: {game.date}, Local: {game.location}")
     db.close()
 
 def listar_jogadores():
