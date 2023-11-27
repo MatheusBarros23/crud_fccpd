@@ -10,6 +10,31 @@ def create_team_api(db: Session, name: str):
     db.refresh(team)
     return team
 
+def update_team_api(db: Session, team_id: int, name: str):
+    team = db.query(Team).filter(Team.id == team_id).first()
+    if not team:
+        raise HTTPException(status_code=404, detail="Time não encontrado")
+
+    team.name = name
+
+    db.commit()
+    db.refresh(team)
+
+    return team
+
+def update_player_api(db: Session, player_id: int, name: str, team_id: int):
+    player = db.query(Player).filter(Player.id == player_id).first()
+    if not player:
+        raise HTTPException(status_code=404, detail="Jogador não encontrado")
+
+    player.name = name
+    player.team_id = team_id
+
+    db.commit()
+    db.refresh(player)
+
+    return player
+
 def create_player_api(db: Session, name: str, team_id: int):
     player = Player(name=name, team_id=team_id)
     db.add(player)
@@ -35,6 +60,27 @@ def read_games_api(db: Session, skip: int = 0, limit: int = 20):
     games = db.query(Game).offset(skip).limit(limit).all()
     game_list = [{"id": game.id, "date": game.date, "location": game.location, "team_home": db.query(Team).filter(Team.id == game.team_id_home).first().name, "team_away": db.query(Team).filter(Team.id == game.team_id_away).first().name} for game in games]
     return game_list
+
+def update_game_api(db: Session, game_id: int, team_id_home: int, team_id_away: int, date: str, location: str):
+    game = db.query(Game).filter(Game.id == game_id).first()
+    if not game:
+        raise HTTPException(status_code=404, detail="Jogo não encontrado")
+
+    teams = db.query(Team).filter(Team.id.in_([team_id_home, team_id_away])).all()
+    if team_id_home == team_id_away:
+        raise HTTPException(status_code=400, detail="Um time não pode jogar contra si mesmo!") 
+    if len(teams) != 2:
+        raise HTTPException(status_code=404, detail="Um ou ambos os times não foram encontrados")  
+
+    game.team_home = teams[0]
+    game.team_away = teams[1]
+    game.date = date
+    game.location = location
+
+    db.commit()
+    db.refresh(game)
+
+    return game
 
 def get_players_by_team_api(db: Session, team_id: int):
     players = db.query(Player).filter(Player.team_id == team_id).all()
