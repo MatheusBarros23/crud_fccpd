@@ -82,22 +82,69 @@ projetoAV2Docker/
 
 ## Acesso ao Banco de Dados
 
-Para acessar o banco de dados diretamente, você pode usar o seguinte comando:
+**1. Parando e Reiniciando o Container:**
 
-```
-docker-compose exec app bash
-psql -h db -U user -d db
-```
+Após a execução do primeiro cenário, vamos parar o contêiner e reiniciar só o DB para simular um segundo cenário de execução. 
+Dê o STOP nos containers no Docker Desktop e utilize o seguinte comando:
 
-Isso abrirá um shell interativo do PostgreSQL onde você pode executar comandos SQL. Caso queira consultar os dados da tabela de times.
-
-```
-\dt
-SELECT * FROM teams;
+```bash
+# Reinicie o contêiner do banco de dados
+docker-compose restart db
 ```
 
-Lembre-se de que é necessário ter o cliente PostgreSQL instalado localmente para usar o comando `psql`.
+**2. Abra o Conectando-se ao Banco de Dados:**
 
+```bash
+docker-compose exec db bash
+
+# Conecte-se ao banco de dados PostgreSQL usando psql
+psql -U user -d db
+```
+
+Insira a senha quando solicitado.
+```bash
+password
+```
+
+**3. Realizando Operações CRUD:**
+
+Agora, dentro do ambiente interativo do PostgreSQL, realize as operações CRUD:
+
+**3.1. Inserir Dados:**
+
+```sql
+INSERT INTO players (name, team_id) VALUES ('novoJogador', 2);
+```
+
+**3.2. Atualizar Dados:**
+
+```sql
+UPDATE players SET name = 'nomeAlterado' WHERE name = 'Xena Souza';
+```
+
+**4. Verificando as Alterações:**
+
+Para verificar as alterações, você pode realizar uma consulta simples:
+
+```sql
+SELECT * FROM players;
+```
+
+Isso mostrará os dados atualizados na tabela de jogadores.
+
+**5. Encerrando o Contêiner:**
+
+Quando terminar, você pode sair do ambiente interativo do PostgreSQL e parar o contêiner:
+
+```bash
+# Sair do shell interativo do contêiner
+exit
+
+# Parar o contêiner do banco de dados
+docker-compose down
+```
+
+Esses comandos encerrarão o contêiner e encerrarão a simulação do segundo cenário de execução. Certifique-se de que suas operações CRUD foram concluídas antes de encerrar o contêiner.
 
 ## Observações
 
