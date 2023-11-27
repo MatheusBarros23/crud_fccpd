@@ -70,7 +70,7 @@ projetoAV2Docker/
 
    [http://localhost:8000/docs](http://localhost:8000/docs)
 
-3. Execute o script interativo:
+3. Para executar o script interativo:
 
    ```
    docker-compose exec app bash
